@@ -1,0 +1,8 @@
+data/*
+sicx_data/*
+fertige_blendwuensche/*
+bearbeitungslisten/*
+
+!sicx_data/.gitkeep
+!fertige_blendwuensche/.gitkeep
+!bearbeitungslisten/.gitkeep
