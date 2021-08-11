@@ -39,8 +39,12 @@ Dir.glob('anzupassende_zsp/*') do |file|
     end
   end
 
-  File.open("angepasste_zsp/#{basename}", 'w+') do |file|
-    file.puts(new_file_arr)
+  if change_counter > 0
+    File.open("angepasste_zsp/#{basename}", 'w+') do |file|
+      file.puts(new_file_arr)
+    end
+  else
+    FileUtils.rm_rf("angepasste_zsp/#{basename}")
   end
 
   # printf("\n\e[1;32m%-14s\e[m %-8s %s\n", 'Abgeschlossen:',basename , '')
@@ -49,3 +53,4 @@ Dir.glob('anzupassende_zsp/*') do |file|
 
   # puts "Anzahl gefundener Kommentare: #{File.read("anzupassende_scripte/#{basename}").scan(/\/\*.*\*\//).count}"
 end
+puts 'Im Ordner "angepasste_zsp" befinden sich nun nur noch Scripte in denen es Änderungen gab.'
