@@ -9,17 +9,23 @@ puts 'Welcher String soll als Kommentar angehängt werden? z.B. Migration Juni20
 # suffix = 'Migration Juni2021'
 suffix = gets.chomp
 
+FileUtils.rm_rf('angepasste_zsp')
+FileUtils.rm_rf('tmp')
+
+# Create work dir
+Dir.mkdir('tmp')
+FileUtils.copy_entry('anzupassende_zsp', 'tmp')
+# system('dos2unix -q tmp/*')
+
 Dir.mkdir('angepasste_zsp') unless Dir.exist?('angepasste_zsp')
 
 filecounter = 0
-Dir.glob('anzupassende_zsp/*') do |file|
+Dir.glob('tmp/*') do |file|
   filecounter += 1
   basename = File.basename(file)
   change_counter = 0
 
-  FileUtils.cp(file, "angepasste_zsp/#{basename}")
-
-  file_arr = File.readlines("angepasste_zsp/#{basename}",  encoding: 'iso-8859-1')
+  file_arr = File.readlines("tmp/#{basename}",  encoding: 'iso-8859-1')
   printf("\e[1;32m%-14s\e[m %-8s %s\n", 'Bearbeite:', basename, '')
   new_file_arr = []
 
@@ -43,14 +49,18 @@ Dir.glob('anzupassende_zsp/*') do |file|
     File.open("angepasste_zsp/#{basename}", 'w+') do |file|
       file.puts(new_file_arr)
     end
-  else
-    FileUtils.rm_rf("angepasste_zsp/#{basename}")
+  # else
+  #   FileUtils.rm_rf("angepasste_zsp/#{basename}")
   end
 
   # printf("\n\e[1;32m%-14s\e[m %-8s %s\n", 'Abgeschlossen:',basename , '')
   # printf("\e[1;32m%-5s\e[m %-8s %s\n", '',"Kommentare verschoben: " , "#{change_counter}")
   # printf("\e[1;32m%-5s\e[m %-8s %s\n", '',"Scripte gefunden: " , "#{filecounter}")
 
-  # puts "Anzahl gefundener Kommentare: #{File.read("anzupassende_scripte/#{basename}").scan(/\/\*.*\*\//).count}"
+  # puts "Anzahl gefundener Kommentare: #{File.read("anzupassende_zsp/#{basename}").scan(/\/\*.*\*\//).count}"
 end
+
+FileUtils.rm_rf('tmp')
+
+# system("find angepasste_zsp/ -type f | xargs unix2dos -q")
 puts 'Im Ordner "angepasste_zsp" befinden sich nun nur noch Scripte in denen es Änderungen gab.'
