@@ -1,5 +1,5 @@
 require 'fileutils'
-require 'pry'
+# require 'pry'
 
 FileUtils.rm_rf('angepasste_zsp')
 Dir.mkdir('angepasste_zsp')
