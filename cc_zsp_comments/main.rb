@@ -9,7 +9,7 @@ FileUtils.rm_rf('tmp')
 Dir.mkdir('tmp')
 FileUtils.copy_entry('anzupassende_scripte', 'tmp')
 system('dos2unix -q tmp/*')
-system("sed -i 's++\n+' tmp/*")
+system('bash convert_newline.sh')
 
 filecounter = 0
 Dir.glob('anzupassende_scripte/*') do |file|
