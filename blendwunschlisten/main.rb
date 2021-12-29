@@ -8,8 +8,12 @@
 require 'fileutils'
 # require 'ap'
 
-
 $seperator = "|" #CSV muss mit Pipe (|) getrennt abgespeichert werden! (Kommas oder Semicolons kommen bereits in der Excel Datei vor)
+
+#### HIER DATEINAMEN ANPASSEN #####
+$csv_geb_sys = "DesigoCC-AS-Zuordnung-Gebäude-V03_Anpassung-Siemens_20211216.csv"
+$csv_energy_sys = "DesigoCC-AS-Zuordnung-Energie-V03.csv"
+###################################
 
 puts "Falls ein Fehler auftritt bitte kontrollieren ob csv Datei mit '|' als Seperator abgespeichert wurde."
 puts
@@ -48,8 +52,8 @@ def get_needed_dir(line, energie, geb_info)
 end
 
 def parse_bearbeitungslisten
-  data_geb = File.readlines('bearbeitungslisten/DesigoCC-AS-Zuordnung-Gebäude-V03_Anpassung-Siemens_20211216.csv', encoding: 'iso-8859-1')[3..-1]
-  data_energy = File.readlines('bearbeitungslisten/DesigoCC-AS-Zuordnung-Energie-V03.csv', encoding: 'iso-8859-1')[3..-1]
+  data_geb = File.readlines("bearbeitungslisten/#{$csv_geb_sys}", encoding: 'iso-8859-1')[3..-1]
+  data_energy = File.readlines("bearbeitungslisten/#{$csv_energy_sys}", encoding: 'iso-8859-1')[3..-1]
   parsed_geb = parse_bearbeitungsliste(data_geb, geb_sys: true)
   parsed_energy = parse_bearbeitungsliste(data_energy, geb_sys: false)
   parsed_geb.merge(parsed_energy)
