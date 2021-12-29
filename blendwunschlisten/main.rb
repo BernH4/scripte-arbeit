@@ -8,6 +8,12 @@
 require 'fileutils'
 # require 'ap'
 
+
+$seperator = "|" #CSV muss mit Pipe (|) getrennt abgespeichert werden! (Kommas oder Semicolons kommen bereits in der Excel Datei vor)
+
+puts "Falls ein Fehler auftritt bitte kontrollieren ob csv Datei mit '|' als Seperator abgespeichert wurde."
+puts
+
 FileUtils.rm_rf('fertige_blendwuensche')
 FileUtils.rm_rf('tmp')
 
@@ -42,9 +48,8 @@ def get_needed_dir(line, energie, geb_info)
 end
 
 def parse_bearbeitungslisten
-  data_geb = File.readlines('bearbeitungslisten/DesigoCC-AS-Zuordnung-Gebäude-V03.csv', encoding: 'iso-8859-1')[3..-1]
-  data_energy = File.readlines('bearbeitungslisten/DesigoCC-AS-Zuordnung-Energie-V03.csv',
-                               encoding: 'iso-8859-1')[3..-1]
+  data_geb = File.readlines('bearbeitungslisten/DesigoCC-AS-Zuordnung-Gebäude-V03_Anpassung-Siemens_20211216.csv', encoding: 'iso-8859-1')[3..-1]
+  data_energy = File.readlines('bearbeitungslisten/DesigoCC-AS-Zuordnung-Energie-V03.csv', encoding: 'iso-8859-1')[3..-1]
   parsed_geb = parse_bearbeitungsliste(data_geb, geb_sys: true)
   parsed_energy = parse_bearbeitungsliste(data_energy, geb_sys: false)
   parsed_geb.merge(parsed_energy)
@@ -54,7 +59,7 @@ def parse_bearbeitungsliste(data, geb_sys:)
   gebs = {}
   data.each do |line|
     line.encode!('utf-8')
-    cols = line.split(';')
+    cols = line.split($seperator)
     if geb_sys
       geb = cols.first.delete('*')
       next if geb.nil?
@@ -70,7 +75,30 @@ def parse_bearbeitungsliste(data, geb_sys:)
   gebs
 end
 
+def data_ok?(geb_info)
+  puts "Bitte kontrollieren ob die Daten (für benötigten Monat) richtig eingelesen wurden:"
+  puts "Achtung Energiesystem ist getrennt weiter unten aufgelistet"
+  sleep(5.0)
+
+  prev_month = nil
+    geb_info.each do |geb, value|
+      month = value[:month]
+      next if month.include?("entfällt")
+      puts month unless month == prev_month
+      puts "   #{geb} -> #{value[:server]}" unless geb == ""
+      prev_month = month
+    end
+  puts
+  puts "Falls die Daten falsch sind wurde die CSV möglicherweiße nicht mit | als Seperator abgespeichert"
+  puts "Abbruch mit STRG-C weiter mit ENTER"
+  input = STDIN.gets
+  exit unless input == "\n"
+end
+
 geb_info = parse_bearbeitungslisten
+
+# Auskommentiert, da wahrscheinlich einfach Daten Direkt im Ortner zu kontrollieren.
+# data_ok?(geb_info)
 
 Dir['tmp/*'].each do |complete_file|
   filename = File.basename(complete_file)
@@ -94,6 +122,7 @@ Dir['tmp/*'].each do |complete_file|
 
     if special
       if line.include?('Betriebsstd_OG_Zust')
+        puts "Spezialfall: _354/Z4AG2A/S05/HEBEANLAGEN/BA_PROZESS/WARTUNGSSCHALTER_TOC (Scheibe: Januar 2022) wurde übersprungen"
         special = false
         next
       else
