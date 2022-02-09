@@ -11,7 +11,7 @@ require 'fileutils'
 $seperator = "|" #CSV muss mit Pipe (|) getrennt abgespeichert werden! (Kommas oder Semicolons kommen bereits in der Excel Datei vor)
 
 #### HIER DATEINAMEN ANPASSEN #####
-$csv_geb_sys = "DesigoCC-AS-Zuordnung-Gebäude-V03_Anpassung-Siemens_20211216.csv"
+$csv_geb_sys = "DesigoCC-AS-Zuordnung-Gebäude-V03_Anpassung-Siemens_20220118.csv"
 $csv_energy_sys = "DesigoCC-AS-Zuordnung-Energie-V03.csv"
 ###################################
 
